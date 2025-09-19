@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: dms-postgres-dev
+    environment:
+      POSTGRES_DB: dms_dev
+      POSTGRES_USER: dms_user
+      POSTGRES_PASSWORD: dms_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./docker/postgres/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - dms-dev-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: dms-redis-dev
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - dms-dev-network
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+
+networks:
+  dms-dev-network:
+    driver: bridge
